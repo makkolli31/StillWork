@@ -16,17 +16,18 @@ col_names = ['datetime','setting1','setting2','pcount','CourseOp','ProcedureNo',
              'WaterFlow22','RinseStep','MotorDir']
 
 def extract_data(path, filename):
+    print(filename)
     df = pd.read_csv(filename, sep=' ', header=None)
-    print(df.head())
+    #print(df.head())
 
     df.drop(df.columns[df.index[42:103]], axis=1, inplace=True)
     df.columns = col_names
-    print(df.head())
+    #print(df.head())
 
     idx = df.index[df['RinseStep'] == 8].tolist()
     df_output = df.loc[idx]
-    print(df_output)
-    print(df_output.values)
+    #print(df_output)
+    #print(df_output.values)
 
     df_out = pd.DataFrame()
     df_list = []
@@ -46,8 +47,9 @@ def extract_data(path, filename):
         WashStartLoad = (int(hex(row['WashStartLoad1']), 16) << 8) | int(hex(row['WashStartLoad2']), 16)
         WashMotorLoad = (int(hex(row['WashMotorLoad1']), 16) << 8) | int(hex(row['WashMotorLoad2']), 16)
         WaterFlow2 = (int(hex(row['WaterFlow21']), 16) << 8) | int(hex(row['WaterFlow22']), 16)
-        # or df_out.shape[0] > 150)
-        if RequestRPM == 0 and df_out.shape[0] != 0 :
+        if df_out.shape[0] >= 140 and RequestRPM != 0:
+            continue
+        if RequestRPM == 0 and df_out.shape[0] != 0:
             df_out = df_out.reset_index(drop=True)
             df_list.append(df_out)
             df_out = pd.DataFrame()
